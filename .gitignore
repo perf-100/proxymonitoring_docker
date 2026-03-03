@@ -1,7 +1,1 @@
-/vendor
-/node_modules
-/storage/*.key
-/storage/framework/*
-/storage/logs/*
-
 /mysql
