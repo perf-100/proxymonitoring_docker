@@ -1,0 +1,84 @@
+services:
+  nginx:
+    image: "nginx:latest"
+    ports:
+      - "8000:80"
+    build:
+      dockerfile: dockerfiles/nginx.Dockerfile
+    depends_on:
+      - mysql
+      - php
+    volumes:
+      - ./src:/var/www/proxy
+  php:
+    build:
+      context: dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/proxy
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3316:3306"
+    env_file:
+      - env/mysql.env
+    volumes:
+      - ./mysql:/var/lib/mysql
+  artisan:
+    build:
+      context: dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/proxy
+    depends_on:
+      - mysql
+    entrypoint: ["php", "/var/www/proxy/artisan"]
+  composer:
+    build:
+      context: dockerfiles
+      dockerfile: composer.Dockerfile
+    volumes:
+      - ./src:/var/www/proxy
+  queue:
+    build:
+      context: dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/proxy
+    depends_on:
+      - mysql
+    command: php artisan queue:work --verbose --tries=3 --timeout=90
+    restart: unless-stopped
+
+  reverb:
+    build:
+      context: dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/proxy
+    depends_on:
+      - php
+    command: php artisan reverb:start --host=0.0.0.0 --port=6001 --debug
+    ports:
+      - "6001:6001"
+    restart: unless-stopped
+  
+  scheduler:
+    build:
+      context: dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/proxy
+    depends_on:
+      - mysql
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    restart: unless-stopped
+
+  node:
+    image: node:20
+    working_dir: /var/www/proxy
+    volumes:
+      - ./src:/var/www/proxy
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host"
