@@ -21,4 +21,7 @@ defineProps({
     search: String,
     status: String,
 })
+
+const emit = defineEmits(['update:search', 'update:status'])
+
 </script>

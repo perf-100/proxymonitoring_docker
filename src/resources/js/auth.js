@@ -5,7 +5,7 @@ export const user = ref(null)
 
 export async function fetchUser() {
     try {
-        const res = await axios.get('/api/user', { withCredentials: true })
+        const res = await axios.get(route('user'), { withCredentials: true })
         user.value = res.data
     } catch (err) {
         user.value = null
@@ -14,7 +14,7 @@ export async function fetchUser() {
 
 export async function logout() {
     try {
-        await axios.post('/logout', {}, { withCredentials: true })
+        await axios.post(route('logout'), {}, { withCredentials: true })
     } catch (err) {
         console.warn('Ошибка логаута', err)
     }
@@ -23,7 +23,7 @@ export async function logout() {
 
     // чтобы следующий логин прошёл
     try {
-        await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
+        await axios.get(route('sanctum.csrf-cookie'), { withCredentials: true })
     } catch (err) {
         console.warn('Не удалось обновить CSRF cookie', err)
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\NotificationHelper;
+use App\Http\Resources\NotificationResource;
 use App\Models\Proxy;
 use Illuminate\Http\Request;
 
@@ -12,16 +13,13 @@ class NotificationController extends Controller
 
     }
 
-    public function index(Request $request, $id)
+    public function index(Request $request, Proxy $proxy)
     {
-        $proxy = Proxy::findOrFail($id);
         $this->authorize('view', $proxy);
 
         $data = $this->helper->paginate($proxy);
 
-        return response()->json(
-            $data
-        );
+        return NotificationResource::collection($data);
     }
 
 }

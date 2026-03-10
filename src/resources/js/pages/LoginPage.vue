@@ -42,7 +42,7 @@ const { showAlert } = useAlert()
 async function submitLogin() {
     
     try {
-        await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
+        await axios.get(route('sanctum.csrf-cookie'), { withCredentials: true })
 
         const payload = {
             email: email.value,
@@ -50,21 +50,21 @@ async function submitLogin() {
             remember: remember.value
         }
 
-        await axios.post('/login', payload, { withCredentials: true })
-        const userRes = await axios.get('/api/user', { withCredentials: true })
+        await axios.post(route('login.store'), payload, { withCredentials: true })
+        const userRes = await axios.get(route('user'), { withCredentials: true })
         user.value = userRes.data
 
         router.push('/')
 
-    } catch (e) {
+    } catch (err) {
 
-        if (e.response?.data?.message) {
-            showAlert(e.response.data.message, 'error')
-        } else if (e.response?.status === 422 && e.response.data.errors) {
-            const firstError = Object.values(e.response.data.errors)[0][0]
+        if (err.response?.data?.message) {
+            showAlert(err.response.data.message, 'error')
+        } else if (err.response?.status === 422 && err.response.data.errors) {
+            const firstError = Object.values(err.response.data.errors)[0][0]
             showAlert(firstError, 'error')
         } else {
-            showAlert('Сервер недоступен', 'error')
+            showAlert(err, 'error')
         }
 
     }

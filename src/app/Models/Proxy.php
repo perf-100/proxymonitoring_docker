@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Events\ProxyStatusChanged;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +14,8 @@ class Proxy extends Model
         'checked_at' => 'datetime',
     ];
 
+    protected $appends = ['raw'];
+
     protected $fillable = [
         'user_id',
         'host',
@@ -21,12 +23,20 @@ class Proxy extends Model
         'login',
         'password',
         'type',
-        'raw',
         'comment',
         'status',
         'checked_at',
         'check_interval'
     ];
+
+    protected static function booted()
+    {
+        static::updated(function ($proxy) {
+            if ($proxy->wasChanged('status')) {
+                ProxyStatusChanged::dispatch($proxy, $proxy->getOriginal('status'));
+            }
+        });
+    }
 
     public function user()
     {
@@ -46,10 +56,14 @@ class Proxy extends Model
     public function scopeFilter($query, array $filters)
     {
         return $query
-            ->when($filters['search'] ?? null, fn($q,$v) =>
-                $q->where('host','like',"%$v%")
-                  ->orWhere('raw','like',"%$v%")
-            )
+            ->when($filters['search'] ?? null, function ($q, $v) {
+                $q->where(function ($q) use ($v) {
+                    $q->where('host','like',"%$v%")
+                    ->orWhere('port','like',"%$v%")
+                    ->orWhere('login','like',"%$v%")
+                    ->orWhere('password','like',"%$v%");
+                });
+            })
             ->when($filters['type'] ?? null, fn($q,$v) =>
                 $q->where('type',$v)
             )
@@ -57,12 +71,28 @@ class Proxy extends Model
                 $q->where('status',$v));
     }
 
-    public function shouldBeChecked(): bool
+    public function getRawAttribute(): string
     {
-        if (!$this->checked_at) {
-            return true;
+        $auth = '';
+
+        if ($this->login && $this->password) {
+            $auth = ":{$this->login}:{$this->password}";
         }
 
-        return $this->checked_at->addSeconds($this->check_interval - 5)->lte(Carbon::now()); // чтобы старт ежеминутного расписания работал отнимаю 5 секунд
+        if ($this->type === 'socks5') {
+            return "socks5://{$this->host}:{$this->port}{$auth}";
+        }
+
+        return "{$this->host}:{$this->port}{$auth}";
+    }
+
+    public function scopeShouldBeChecked($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('checked_at')
+            ->orWhereRaw(
+                'checked_at + INTERVAL(check_interval - 5) SECOND <= NOW()' // чтобы старт ежеминутного расписания работал отнимаю 5 секунд
+            );
+        });
     }
 }

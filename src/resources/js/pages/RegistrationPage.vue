@@ -47,7 +47,7 @@ async function submitRegistration() {
     loading.value = true
 
     try {
-        await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
+        await axios.get(route('sanctum.csrf-cookie'), { withCredentials: true })
 
         const payload = {
             name: name.value,
@@ -56,19 +56,19 @@ async function submitRegistration() {
             password_confirmation: password_confirmation.value
         }
 
-        await axios.post('/register', payload, { withCredentials: true })
-        const userRes = await axios.get('/api/user', { withCredentials: true })
+        await axios.post(route('register.store'), payload, { withCredentials: true })
+        const userRes = await axios.get(route('user'), { withCredentials: true })
         user.value = userRes.data
         router.push('/')
 
-    } catch (e) {
-        if (e.response?.status === 422) {
-            const firstError = Object.values(e.response.data.errors)[0][0]
+    } catch (err) {
+        if (err.response?.status === 422) {
+            const firstError = Object.values(err.response.data.errors)[0][0]
             showAlert(firstError, 'error')
-        } else if (e.response?.data?.message) {
-            showAlert(e.response.data.message, 'error')
+        } else if (err.response?.data?.message) {
+            showAlert(err.response.data.message, 'error')
         } else {
-            showAlert('Сервер недоступен', 'error')
+            showAlert(err, 'error')
         }
     } finally {
         loading.value = false

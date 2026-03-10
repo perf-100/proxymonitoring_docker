@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('login')->nullable();
             $table->string('password')->nullable();
             $table->enum('type', ['http', 'https', 'socks4', 'socks5'])->default('http');
-            $table->text('raw');
             $table->enum('status', ['unknown', 'working', 'failed'])->default('unknown');
             $table->timestamp('checked_at')->nullable();
             $table->unsignedBigInteger('check_interval')->default(300);

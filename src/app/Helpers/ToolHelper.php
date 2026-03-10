@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Models\Proxy;
 use App\Models\ProxyCheck;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -26,14 +25,13 @@ class ToolHelper
 
         $data = $response->json();
 
-        $proxies = Proxy::where('user_id', $user->id)->pluck('id')->toArray();
-
         $latestChecks = ProxyCheck::where('status', 'working')
-            ->whereIn('proxy_id', $proxies)
+            ->whereHas('proxy', fn($q) => $q->where('user_id', $user->id))
             ->orderByDesc('created_at')
             ->get()
             ->groupBy('proxy_id')
-            ->map(fn($checks) => $checks->first()->ip_addr)->toArray(); // берём только  свежий ip
+            ->map(fn($checks) => $checks->first()->ip_addr) // берём только  свежий ip
+            ->toArray();
 
         $data['proxy'] = in_array($data['query'] ?? '', $latestChecks);
 

@@ -37,11 +37,11 @@ class NotificationHelper
 
         foreach ($bots as $bot) {
 
-            if ($proxy->status === 'failed') {
-                $message = "<b>Прокси упал</b> \n{$proxy->raw}";
-            } else {
-                $message = "<b>Прокси снова работает</b> \n{$proxy->raw}";
-            }
+            $statusText = $proxy->status === 'failed'
+                ? 'Прокси упал'
+                : 'Прокси снова работает';
+
+            $message = "<b>{$statusText}</b> \n{$proxy->raw}";
 
             $this->send($bot, $proxy, $message);
         }

@@ -37,13 +37,10 @@ class ParserHelper
             }
         }
 
-        // Проверка валидности
         if (empty($host) || empty($port)) {
-            throw ValidationException::withMessages([
-                'proxy_string' => 'Неверный формат прокси'
-            ]);
+            return null;
         }
-
+        
         return compact('host', 'port', 'login', 'password', 'type');
     }
 }

@@ -41,7 +41,7 @@ const loading = ref(true)
 const loadInfo = async () => {
     loading.value = true
     try {
-        const res = await axios.get('/api/tools', { withCredentials: true })
+        const res = await axios.get(route('tools.index'), { withCredentials: true })
         info.value = res.data
     } catch (e) {
         showAlert('Не удалось загрузить информацию', 'error')

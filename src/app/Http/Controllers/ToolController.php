@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ToolHelper;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class ToolController extends Controller
 {

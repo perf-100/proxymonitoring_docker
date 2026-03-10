@@ -20,20 +20,9 @@ class TelegramBotHelper
 
     public function create(User $user, array $input)
     {
-        $botToken = $input['bot_token'];
-
-        $response = Http::timeout(5)
-            ->get("https://api.telegram.org/bot{$botToken}/getMe");
-
-        if (!$response->successful() || !$response->json('ok')) {
-            throw ValidationException::withMessages([
-                'bot_token' => 'Неверный токен бота'
-            ]);
-        }
-
         TelegramBot::create([
             'user_id' => $user->id,
-            'bot_token' => $botToken,
+            'bot_token' => $input['bot_token'],
             'chat_id' => $input['chat_id'],
             'status' => 'active',
         ]);

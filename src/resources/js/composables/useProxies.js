@@ -14,10 +14,10 @@ export function useProxies() {
         status: ''
     })
 
-    const loadProxies = async () => {
+    const loadProxies = async (url = route('proxies.index')) => {
         loading.value = true
         try {
-            const { data } = await axios.get('/api/proxies', {
+            const { data } = await axios.get(url, {
                 params: filters,
                 withCredentials: true
             })
@@ -33,7 +33,7 @@ export function useProxies() {
 
     const checkNow = async (proxy) => {
         try {
-            await axios.post(`/api/proxies/${proxy.id}/check`, {}, { withCredentials: true })
+            await axios.post(route('proxies.check', proxy.id), {}, { withCredentials: true })
             showAlert('Проверка запущена', 'success')
             await loadProxies()
         } catch (e) {

@@ -27,17 +27,6 @@ class ProxyHelper
 
         $parsed = $this->parser->parse($input['proxy_string']);
 
-        $exists = Proxy::where('user_id', $user->id)
-            ->where('host', $parsed['host'])
-            ->where('port', $parsed['port'])
-            ->exists();
-
-        if ($exists) {
-            throw ValidationException::withMessages([
-                'proxy_string' => 'Такой прокси уже добавлен'
-            ]);
-        }
-
         Proxy::create([
             'user_id' => $user->id,
             'host' => $parsed['host'],
@@ -45,27 +34,14 @@ class ProxyHelper
             'login' => $parsed['login'],
             'password' => $parsed['password'],
             'type' => $parsed['type'],
-            'raw' => $input['proxy_string'],
             'check_interval' => $input['check_interval'],
             'comment' => $input['comment'] ?? null,
         ]);
     }
 
-    public function update(User $user, Proxy $proxy, array $input) {
+    public function update(Proxy $proxy, array $input) {
 
         $parsed = $this->parser->parse($input['proxy_string']);
-
-        $exists = Proxy::where('user_id', $user->id)
-            ->where('host', $parsed['host'])
-            ->where('port', $parsed['port'])
-            ->whereNot('id', $proxy->id)
-            ->exists();
-
-        if ($exists) {
-            throw ValidationException::withMessages([
-                'proxy_string' => 'Такой прокси уже добавлен'
-            ]);
-        }
 
         $proxy->update([
             'host' => $parsed['host'],
@@ -73,7 +49,6 @@ class ProxyHelper
             'login' => $parsed['login'],
             'password' => $parsed['password'],
             'type' => $parsed['type'],
-            'raw' => $input['proxy_string'],
             'comment' => $input['comment'] ?? null,
             'check_interval' => $input['check_interval'],
         ]);
@@ -84,6 +59,6 @@ class ProxyHelper
     }
 
     public function dispatchCheck(Proxy $proxy) {
-        CheckProxyJob::dispatch($proxy);
+        CheckProxyJob::dispatch($proxy->id);
     }
 }

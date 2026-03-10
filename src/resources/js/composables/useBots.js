@@ -13,10 +13,10 @@ export function useBots() {
         status: '',
     })
 
-    const loadBots = async () => {
+    const loadBots = async (url = route('bots.index')) => {
         loading.value = true
         try {
-            const { data } = await axios.get('/api/bots', {
+            const { data } = await axios.get(url, {
                 params: filters,
                 withCredentials: true
             })

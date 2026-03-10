@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TelegramBotHelper;
+use App\Http\Requests\TelegramBotFilterRequest;
 use App\Http\Requests\TelegramBotRequest;
+use App\Http\Resources\TelegramBotResource;
 use App\Models\TelegramBot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,15 +16,11 @@ class TelegramBotController extends Controller
 
     }
 
-    public function index(Request $request)
+    public function index(TelegramBotFilterRequest $request)
     {
-        $filters = $request->only(['search', 'status']);
+        $data = $this->helper->paginate(Auth::user(), $request->validated());
 
-        $bots = $this->helper->paginate(Auth::user(), $filters);
-
-        return response()->json(
-            $bots
-        );
+        return TelegramBotResource::collection($data);
     }
 
     public function store(TelegramBotRequest $request)
@@ -34,9 +32,8 @@ class TelegramBotController extends Controller
         ]);
     }
 
-    public function toggle(Request $request, $id)
+    public function toggle(Request $request, TelegramBot $bot)
     {
-        $bot = TelegramBot::findOrFail($id);
         $this->authorize('update', $bot);
 
         $this->helper->toggle($bot);
@@ -46,9 +43,8 @@ class TelegramBotController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, TelegramBot $bot)
     {
-        $bot = TelegramBot::findOrFail($id);
         $this->authorize('delete', $bot);
 
         $this->helper->delete($bot);

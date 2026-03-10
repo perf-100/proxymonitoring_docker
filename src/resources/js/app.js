@@ -4,6 +4,7 @@ import router from './router'
 import axios from 'axios'
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
+import { ZiggyVue } from 'ziggy-js';
 
 window.Pusher = Pusher
 window.Echo = new Echo({
@@ -21,4 +22,6 @@ axios.defaults.withCredentials = true
 
 const app = createApp(App)
 app.use(router)
+app.use(ZiggyVue)
+
 app.mount('#app')

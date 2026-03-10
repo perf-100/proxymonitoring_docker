@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Events\ProxyChecked;
-use App\Helpers\NotificationHelper;
 use App\Helpers\ProxyCheckHelper;
 use App\Models\Proxy;
 use Illuminate\Bus\Queueable;
@@ -19,7 +18,7 @@ class CheckProxyJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public Proxy $proxy) 
+    public function __construct(public int $proxyId) 
     {
 
     }
@@ -28,16 +27,16 @@ class CheckProxyJob implements ShouldQueue
      * Execute the job.
      */
 
-    public function handle(ProxyCheckHelper $checkerHelper, NotificationHelper $notificationHelper): void {
+    public function handle(ProxyCheckHelper $checkerHelper): void {
 
-        $oldStatus = $this->proxy->status;
+        $proxy = Proxy::find($this->proxyId);
 
-        $checkerHelper->check($this->proxy);
+        if (!$proxy) {
+            return;
+        }
 
-        $proxy = $this->proxy->fresh();
+        $checkerHelper->check($proxy);
 
-        $notificationHelper->notifyStatusChange($proxy, $oldStatus);
-
-        broadcast(new ProxyChecked($proxy));
+        broadcast(new ProxyChecked($proxy->fresh()));
     }
 }

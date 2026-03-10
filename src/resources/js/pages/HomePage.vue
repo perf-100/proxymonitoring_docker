@@ -10,7 +10,7 @@
                     <div class="info__label">О проекте</div>
                     <div class="info__value">
                         SPA-приложение для мониторинга прокси<br>
-                        Реализовано на Laravel 10 + Vue 3 + TypeScript<br>
+                        Реализовано на Laravel 10 + Vue 3<br>
                         Автоматическая и ручная проверка, WebSocket-обновления и настраиваемый интервал проверки<br>
                         Если добавлен телеграм бот, то уведомления о падении и поднятии прокси будут падать туда<br>
                         Адаптивная вёрстка
@@ -40,7 +40,7 @@
                     <div class="info__label">Используемые компоненты и библиотеки</div>
                     <div class="info__value">
                         Laravel 10, sanctum, fortify, reverb<br>
-                        Vue 3, TypeScript, vite, axios, vue-router, pusher-js, laravel-echo, lodash
+                        Vue 3, vite, axios, vue-router, pusher-js, laravel-echo, lodash, ziggy
                     </div>
                 </div>
 

@@ -24,15 +24,15 @@ class ProxySchedule extends Command
 
     /**
      * Execute the console command.
-     */
+    */
     public function handle()
     {
-        Proxy::chunkById(100, function ($proxies) {
-            foreach ($proxies as $proxy) {
-                if ($proxy->shouldBeChecked()) {
-                    CheckProxyJob::dispatch($proxy);
+        Proxy::shouldBeChecked()
+            ->select('id')
+            ->chunkById(100, function ($proxies) {
+                foreach ($proxies as $proxy) {
+                    CheckProxyJob::dispatch($proxy->id);
                 }
-            }
-        });
+            });
     }
 }

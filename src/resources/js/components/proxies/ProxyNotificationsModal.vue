@@ -22,7 +22,7 @@
             </tbody>
         </table>
 
-        <BasePagination :links="modalData.links" @change="loadModalPage" />
+        <BasePagination :links="modalData.meta?.links || []" @change="loadModalPage" />
 
     </BaseModal>
 </template>
@@ -36,25 +36,38 @@ import axios from "axios"
 
 const props = defineProps({
     active: Boolean,
-    data: Object
+    proxyId: Number
 })
+
+const emit = defineEmits(['close'])
 
 const modalData = ref({ data: [], links: [] })
 
-watch(() => props.data, (newData) => {
-    if (newData) modalData.value = { ...newData }
-}, { immediate: true })
+watch([() => props.active, () => props.proxyId],
+    ([isActive, proxyId]) => {
+        if (isActive && proxyId) {
+            resetModal()
+            loadModalPage()
+        }
+    }
+)
 
 const formatDate = dt => dt ? new Date(dt).toLocaleString("ru-RU", { hour12: false }) : "-"
 
-const loadModalPage = async (url) => {
-    if (!url) return
+const loadModalPage = async (url = null) => {
+    if (!props.proxyId) return
+
+    const requestUrl = url || route('notifications.index', props.proxyId)
     try {
-        const res = await axios.get(url, { withCredentials: true })
+        const res = await axios.get(requestUrl, { withCredentials: true })
         modalData.value = res.data
     } catch (err) {
         console.error(err)
     }
+}
+
+const resetModal = () => {
+    modalData.value = { data: [], meta: { links: [] } }
 }
 
 </script>

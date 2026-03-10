@@ -21,33 +21,33 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-});
+})->name('user');
 
 Route::prefix('proxies')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [ProxyController::class, 'index']);
-    Route::post('/', [ProxyController::class, 'store']);
-    Route::put('/{id}', [ProxyController::class, 'update']);
-    Route::delete('/{id}', [ProxyController::class, 'destroy']);
+    Route::get('/', [ProxyController::class, 'index'])->name('proxies.index');
+    Route::post('/', [ProxyController::class, 'store'])->name('proxies.store');
+    Route::put('/{proxy}', [ProxyController::class, 'update'])->name('proxies.update');
+    Route::delete('/{proxy}', [ProxyController::class, 'destroy'])->name('proxies.destroy');
 
-    Route::post('/{id}/check', [ProxyController::class, 'checkNow']);
+    Route::post('/{proxy}/check', [ProxyController::class, 'checkNow'])->name('proxies.check');
 });
 
 Route::prefix('proxies/checks')->middleware('auth:sanctum')->group(function () {
-    Route::get('/{id}', [ProxyCheckController::class, 'index']);
+    Route::get('/{proxy}', [ProxyCheckController::class, 'index'])->name('proxies.checks.index');
 });
 
 Route::prefix('notifications')->middleware('auth:sanctum')->group(function () {
-    Route::get('/{id}', [NotificationController::class, 'index']);
+    Route::get('/{proxy}', [NotificationController::class, 'index'])->name('notifications.index');
 });
 
 Route::prefix('bots')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [TelegramBotController::class, 'index']);
-    Route::post('', [TelegramBotController::class, 'store']);
-    Route::delete('/{id}', [TelegramBotController::class, 'destroy']);
+    Route::get('/', [TelegramBotController::class, 'index'])->name('bots.index');
+    Route::post('/', [TelegramBotController::class, 'store'])->name('bots.store');
+    Route::delete('/{bot}', [TelegramBotController::class, 'destroy'])->name('bots.destroy');
 
-    Route::any('/{id}/toggle', [TelegramBotController::class, 'toggle']);
+    Route::post('/{bot}/toggle', [TelegramBotController::class, 'toggle'])->name('bots.toggle');
 });
 
 Route::prefix('tools')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [ToolController::class, 'index']);
+    Route::get('/', [ToolController::class, 'index'])->name('tools.index');
 });
