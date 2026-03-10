@@ -4,7 +4,24 @@
         <form class="modal__form" @submit.prevent="saveProxy">
 
             <div class="field">
-                <label class="field__label">IP:PORT</label>
+                <label class="field__label">
+                    IP:PORT
+                    <span class="hint">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                            <path d="M12 16V12" stroke="currentColor" stroke-width="2" />
+                            <circle cx="12" cy="8" r="1" fill="currentColor" />
+                        </svg>
+                        <span class="hint__tooltip">
+                            Формат:<br>
+                            IP:PORT<br>
+                            IP:PORT:LOGIN:PASSWORD<br>
+                            ADRESS:PORT<br>
+                            ADRESS:PORT:LOGIN:PASSWORD<br>
+                            TYPE://ADRESS:PORT:LOGIN:PASSWORD
+                        </span>
+                    </span>
+                </label>
                 <input class="input" v-model="proxyString" placeholder="192.168.0.1:80">
             </div>
 
@@ -61,7 +78,7 @@ const saveProxy = async () => {
             check_interval: checkInterval.value
         }
 
-        await axios.post(route('bots.store'), payload, { withCredentials: true })
+        await axios.post(route('proxies.store'), payload, { withCredentials: true })
 
         showAlert('Прокси добавлен', 'success')
         resetForm()
