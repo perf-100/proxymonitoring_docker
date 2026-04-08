@@ -12,11 +12,11 @@ class ProxyCheckHelper
     private $urlCheckProxy;
 
     public function __construct() {
-        $this->urlCheckProxy = env('URL_CHECK_PROXY');
+        $this->urlCheckProxy = config('services.proxy_check.url');
     }
 
-    public function paginate(Proxy $proxy) {
-
+    public function paginate(Proxy $proxy)
+    {
         $data = $proxy->checks()
             ->orderBy('created_at', 'desc')
             ->paginate($this->limit)
@@ -25,15 +25,13 @@ class ProxyCheckHelper
         return $data;
     }
 
-    public function check(Proxy $proxy)
+    public function check(Proxy $proxy): bool
     {
         $start = microtime(true);
 
         try {
-            $proxyUrl = $this->buildProxyUrl($proxy);
-
             $response = Http::withOptions([
-                'proxy' => $proxyUrl,
+                'proxy' => $proxy->buildProxyUrl(),
                 'timeout' => 10,
             ])->get($this->urlCheckProxy . '?format=json');
 
@@ -75,16 +73,5 @@ class ProxyCheckHelper
         }
 
         return false;
-    }
-
-    private function buildProxyUrl(Proxy $proxy)
-    {
-        $auth = '';
-
-        if ($proxy->login) {
-            $auth = "{$proxy->login}:{$proxy->password}@";
-        }
-
-        return "{$proxy->type}://{$auth}{$proxy->host}:{$proxy->port}";
     }
 }

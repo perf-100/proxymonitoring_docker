@@ -5,8 +5,6 @@ namespace App\Helpers;
 use App\Jobs\CheckProxyJob;
 use App\Models\Proxy;
 use App\Models\User;
-use App\Services\ProxyParser;
-use Illuminate\Validation\ValidationException;
 
 class ProxyHelper
 {
@@ -16,16 +14,16 @@ class ProxyHelper
 
     }
 
-    public function paginate(User $user, array $filters) {
-
+    public function paginate(User $user, array $filters) 
+    {
         $data = Proxy::where('user_id', $user->id)->filter($filters)->orderBy('created_at', 'desc')->paginate($this->limit)->withQueryString();
 
         return $data;
     }
 
-    public function create(User $user, array $input) {
-
-        $parsed = $this->parser->parse($input['proxy_string']);
+    public function create(User $user, array $input): void
+    {
+        $parsed = $this->parseInput($input);
 
         Proxy::create([
             'user_id' => $user->id,
@@ -39,9 +37,9 @@ class ProxyHelper
         ]);
     }
 
-    public function update(Proxy $proxy, array $input) {
-
-        $parsed = $this->parser->parse($input['proxy_string']);
+    public function update(Proxy $proxy, array $input): void
+    {
+        $parsed = $this->parseInput($input);
 
         $proxy->update([
             'host' => $parsed['host'],
@@ -54,11 +52,18 @@ class ProxyHelper
         ]);
     }
 
-    public function delete(Proxy $proxy) {
+    public function delete(Proxy $proxy): void
+    {
         $proxy->delete();
     }
 
-    public function dispatchCheck(Proxy $proxy) {
+    public function dispatchCheck(Proxy $proxy): void
+    {
         CheckProxyJob::dispatch($proxy->id);
+    }
+
+    private function parseInput(array $input): array
+    {
+        return $this->parser->parse($input['proxy_string']);
     }
 }

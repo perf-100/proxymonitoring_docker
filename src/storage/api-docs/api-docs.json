@@ -1,0 +1,465 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ProxyMonitoring API",
+        "description": "API для мониторинга прокси",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/notifications/{id}": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Уведомления",
+                "operationId": "56c7e36f59249c625193b23b20548520",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/proxies/checks/{id}": {
+            "get": {
+                "tags": [
+                    "Proxies"
+                ],
+                "summary": "Данные о проверках прокси",
+                "operationId": "49b19b054f789b046bda44f05183e669",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/proxies": {
+            "get": {
+                "tags": [
+                    "Proxies"
+                ],
+                "summary": "Список прокси",
+                "operationId": "b3f6836b094a7a6c5eb9b2b11b5bcceb",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "http",
+                                "https",
+                                "socks4",
+                                "socks5"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "unknown",
+                                "working",
+                                "failed"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Proxies"
+                ],
+                "summary": "Создать прокси",
+                "operationId": "c0c2d3fd5dc8084305e8130ea8fac3a4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "proxy_string",
+                                    "check_interval"
+                                ],
+                                "properties": {
+                                    "proxy_string": {
+                                        "type": "string",
+                                        "example": "login:pass@127.0.0.1:8080"
+                                    },
+                                    "check_interval": {
+                                        "type": "integer",
+                                        "example": 300
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "example": "test proxy"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Создано"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/api/proxies/{id}": {
+            "put": {
+                "tags": [
+                    "Proxies"
+                ],
+                "summary": "Обновить прокси",
+                "operationId": "1aba633a2bf22199651a24c8b7cd52f6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "proxy_string",
+                                    "check_interval"
+                                ],
+                                "properties": {
+                                    "proxy_string": {
+                                        "type": "string",
+                                        "example": "login:pass@127.0.0.1:8080"
+                                    },
+                                    "check_interval": {
+                                        "type": "integer",
+                                        "example": 60
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "example": "test proxy"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Обновлено"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Proxies"
+                ],
+                "summary": "Удалить прокси",
+                "operationId": "f6c796d3d73efb76947b34664ac06809",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                }
+            }
+        },
+        "/api/proxies/{id}/check": {
+            "post": {
+                "tags": [
+                    "Proxies"
+                ],
+                "summary": "Запустить проверку прокси",
+                "operationId": "f71d94adfee6c8dc35334529d36e9ad0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Проверка запущена"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                }
+            }
+        },
+        "/api/bots": {
+            "get": {
+                "tags": [
+                    "TelegramBots"
+                ],
+                "summary": "Список Telegram ботов",
+                "operationId": "f87e1c97ddff703c9df2b726d288331b",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "active",
+                                "disabled"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "TelegramBots"
+                ],
+                "summary": "Создать Telegram бота",
+                "operationId": "e39c1c93d171275b8dd30046cdaa409f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bot_token",
+                                    "chat_id"
+                                ],
+                                "properties": {
+                                    "bot_token": {
+                                        "type": "string",
+                                        "example": "123456:ABCDEF1234567890abcdef1234567890abcd"
+                                    },
+                                    "chat_id": {
+                                        "type": "string",
+                                        "example": "123456789"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Создано",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Бот добавлен"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/api/bots/{id}/toggle": {
+            "post": {
+                "tags": [
+                    "TelegramBots"
+                ],
+                "summary": "Переключить статус бота",
+                "operationId": "e79ef9bc82dd859f4fbfb62ff1eb4090",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Статус изменён"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                }
+            }
+        },
+        "/api/bots/{id}": {
+            "delete": {
+                "tags": [
+                    "TelegramBots"
+                ],
+                "summary": "Удалить бота",
+                "operationId": "3564cb96c948dd3dca76841fb181fffc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                }
+            }
+        },
+        "/api/tools": {
+            "get": {
+                "tags": [
+                    "Tools"
+                ],
+                "summary": "Информация о ip",
+                "operationId": "21747b624f411296ff516e7e5e4cd802",
+                "responses": {
+                    "200": {
+                        "description": "Данные получены"
+                    },
+                    "503": {
+                        "description": "Сервис недоступен"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "bearerFormat": "Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        {
+            "sanctum": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Notifications",
+            "description": "Notifications"
+        },
+        {
+            "name": "Proxies",
+            "description": "Proxies"
+        },
+        {
+            "name": "TelegramBots",
+            "description": "TelegramBots"
+        },
+        {
+            "name": "Tools",
+            "description": "Tools"
+        }
+    ]
+}

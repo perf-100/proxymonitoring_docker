@@ -53,6 +53,17 @@ class Proxy extends Model
         return $this->hasMany(TelegramNotification::class);
     }
 
+    public function buildProxyUrl()
+    {
+        $auth = '';
+
+        if ($this->login && $this->password) {
+            $auth = "{$this->login}:{$this->password}@";
+        }
+
+        return "{$this->type}://{$auth}{$this->host}:{$this->port}";
+    }
+
     public function scopeFilter($query, array $filters)
     {
         return $query

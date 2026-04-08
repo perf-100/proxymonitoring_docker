@@ -13,6 +13,17 @@ class ProxyCheckController extends Controller
 
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/proxies/checks/{id}",
+     *     summary="Данные о проверках прокси",
+     *     tags={"Proxies"},
+     *
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
+     *     @OA\Response(response=200, description="OK")
+     * )
+     */
     public function index(Request $request, Proxy $proxy)
     {
         $this->authorize('view', $proxy);

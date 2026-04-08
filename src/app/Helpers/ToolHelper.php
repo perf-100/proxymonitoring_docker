@@ -12,7 +12,7 @@ class ToolHelper
 
     public function __construct()
     {
-        $this->urlGetIp = env('URL_GET_IP');
+        $this->urlGetIp = config('services.ip_service.url');
     }
 
     public function lookup(User $user)

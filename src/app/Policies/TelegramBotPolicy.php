@@ -4,10 +4,19 @@ namespace App\Policies;
 
 use App\Models\TelegramBot;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TelegramBotPolicy
 {
+    public function create(User $user)
+    {
+        return true; // любой авторизованный
+    }
+
+    public function viewAny(User $user)
+    {
+        return true; // любой авторизованный
+    }
+
     public function view(User $user, TelegramBot $bot)
     {
         return $bot->user_id === $user->id;

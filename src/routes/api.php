@@ -29,7 +29,7 @@ Route::prefix('proxies')->middleware('auth:sanctum')->group(function () {
     Route::put('/{proxy}', [ProxyController::class, 'update'])->name('proxies.update');
     Route::delete('/{proxy}', [ProxyController::class, 'destroy'])->name('proxies.destroy');
 
-    Route::post('/{proxy}/check', [ProxyController::class, 'checkNow'])->name('proxies.check');
+    Route::post('/{proxy}/check', [ProxyController::class, 'check'])->name('proxies.check');
 });
 
 Route::prefix('proxies/checks')->middleware('auth:sanctum')->group(function () {

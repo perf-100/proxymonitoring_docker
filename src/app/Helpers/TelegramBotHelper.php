@@ -18,7 +18,7 @@ class TelegramBotHelper
         return $data;
     }
 
-    public function create(User $user, array $input)
+    public function create(User $user, array $input): void
     {
         TelegramBot::create([
             'user_id' => $user->id,
@@ -28,13 +28,26 @@ class TelegramBotHelper
         ]);
     }
 
-    public function toggle(TelegramBot $bot)
+    public function toggle(TelegramBot $bot): void
     {
         $bot->update(['status' => $bot->status === 'active' ? 'disabled' : 'active']);
     }
 
-    public function delete(TelegramBot $bot)
+    public function delete(TelegramBot $bot): void
     {
         $bot->delete();
+    }
+
+    public function validateToken(string $token): bool
+    {
+        try {
+            $response = Http::timeout(2)->get(
+                "https://api.telegram.org/bot{$token}/getMe"
+            );
+
+            return $response->successful() && $response->json('ok');
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }

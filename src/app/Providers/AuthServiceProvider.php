@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use App\Models\Proxy;
+use App\Models\TelegramBot;
+use App\Policies\ProxyPolicy;
+use App\Policies\TelegramBotPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -13,7 +16,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Proxy::class => ProxyPolicy::class,
+        TelegramBot::class => TelegramBotPolicy::class,
     ];
 
     /**

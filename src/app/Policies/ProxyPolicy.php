@@ -4,10 +4,19 @@ namespace App\Policies;
 
 use App\Models\Proxy;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ProxyPolicy
 {
+    public function create(User $user)
+    {
+        return true; // любой авторизованный
+    }
+
+    public function viewAny(User $user)
+    {
+        return true; // любой авторизованный
+    }
+    
     public function view(User $user, Proxy $proxy)
     {
         return $proxy->user_id === $user->id;

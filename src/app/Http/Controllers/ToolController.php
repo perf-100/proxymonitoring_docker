@@ -12,19 +12,27 @@ class ToolController extends Controller
 
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/tools",
+     *     summary="Информация о ip",
+     *     tags={"Tools"},
+     * 
+     *     @OA\Response(response=200, description="Данные получены"),
+     *     @OA\Response(response=503, description="Сервис недоступен")
+     * )
+     */
     public function index(Request $request)
     {
         try {
             $data = $this->helper->lookup(Auth::user());
 
-            return response()->json(
-                $data
-            );
+            return response()->json($data, 200);
 
         } catch (\Throwable $e) {
 
             return response()->json([
-                'error' => 'Service unavailable'
+                'error' => 'Сервис недоступен'
             ], 503);
         }
     }

@@ -31,4 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'proxy_check' => [
+        'url' => env('URL_CHECK_PROXY'),
+    ],
+
+    'ip_service' => [
+        'url' => env('URL_GET_IP'),
+    ],
+
 ];
